@@ -1,15 +1,15 @@
 ---
 language: multilingual
-thumbnail: "url to a thumbnail used in social sharing"
+thumbnail: "https://amberoad.de/images/logo_text.png"
 tags:
 - msmarco
-- of
-- tags
+- multilingual
+- passage reranking
 license:  Apache-2.0
 datasets:
-- array of dataset identifiers
+- msmarco
 metrics:
-- array of metric identifiers
+- MRR
 ---
 
 # Passage Reranking Multilingual BERT 🔃 🌍
@@ -17,7 +17,7 @@ metrics:
 
 
 ## Model description
-**Input:** Supports over 100 Languages see XXX for all available
+**Input:** Supports over 100 Languages. See [List of supported languages](https://github.com/google-research/bert/blob/master/multilingual.md#list-of-languages) for all available.
 
 **Purpose:** This module takes a search query [1] and a passage [2] and calculates if the passage matches the query. 
 It can be used as an improvement for Elasticsearch Results and boosts the relevancy by up to 100%. 
@@ -35,7 +35,11 @@ As you normally want to rerank the first dozens of search results keep in mind t
 #### How to use
 
 ```python
-# You can include sample code which will be formatted
+from transformers import AutoTokenizer, AutoModel
+
+tokenizer = AutoTokenizer.from_pretrained("amberoad/multilingual-base-bert-passage-reranking-uncased")
+
+model = AutoModel.from_pretrained("nboost/multilingual-base-bert-passage-reranking-uncased")
 ```
 
 This Model can be used as a drop-in replacement in the [Nboost Library](https://github.com/koursaros-ai/nboost)
@@ -44,8 +48,7 @@ Through this you can directly improve your Elasticsearch Results without any cod
 
 ## Training data
 
-This model is trained using the [Microsoft MS Marco Dataset](https://microsoft.github.io/msmarco/ "Microsoft MS Marco"). We use the small.dev.tsv ????
-
+This model is trained using the [**Microsoft MS Marco Dataset**](https://microsoft.github.io/msmarco/ "Microsoft MS Marco"). This training dataset contains approximately 400M tuples of a query, relevant and non-relevant passages. All datasets used for training and evaluating are listed in this [table](https://github.com/microsoft/MSMARCO-Passage-Ranking#data-information-and-formating). The used dataset for training is called *Train Triples Large*, while the evaluation was made on *Top 1000 Dev*. There are 6,900 queries in total in the development dataset, where each query is mapped to top 1,000 passage retrieved using BM25 from MS MARCO corpus. 
 
 ## Training procedure
 
@@ -64,7 +67,7 @@ We see nearly similar performance than the English only Model in the English [Bi
 
 Fine-tuned Models                                                                   | Dependency                                                                   | Eval Set                                                           | Search Boost<a href='#benchmarks'> | Speed on GPU
 ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------- | ----------------------------------
-**`amberoad/Multilingual-uncased-MSMARCO`**  (This Model)                                       | <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-blue"/>          |  <a href ='http://www.msmarco.org/'>bing queries</a>               | **+XX%** <sub><sup>(0.XX vs 0.18)</sup></sub>         | ~50ms/query <a href='#footnotes'>
+**`amberoad/Multilingual-uncased-MSMARCO`**  (This Model)                                       | <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-blue"/>          |  <a href ='http://www.msmarco.org/'>bing queries</a>               | **+61%** <sub><sup>(0.29 vs 0.18)</sup></sub>         | ~50ms/query <a href='#footnotes'>
 `nboost/pt-tinybert-msmarco`                                          | <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-red"/>          |  <a href ='http://www.msmarco.org/'>bing queries</a>               | **+45%** <sub><sup>(0.26 vs 0.18)</sup></sub>         | ~50ms/query <a href='#footnotes'>
 `nboost/pt-bert-base-uncased-msmarco`                                               | <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-red"/>          | <a href ='http://www.msmarco.org/'>bing queries</a>                | **+62%** <sub><sup>(0.29 vs 0.18)</sup></sub>         | ~300 ms/query<a href='#footnotes'>
 `nboost/pt-bert-large-msmarco`                                                      | <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-red"/>          | <a href ='http://www.msmarco.org/'>bing queries</a>                | **+77%** <sub><sup>(0.32 vs 0.18)</sup></sub>         | -
